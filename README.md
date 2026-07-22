@@ -1,57 +1,63 @@
 # ConfigSentry
 
-**ConfigSentry** is a high-performance, asynchronous CLI tool designed to audit web applications for common security misconfigurations, missing HTTP security headers, and SSL/TLS certificate issues.
+**ConfigSentry** is an asynchronous, high-performance security CLI tool engineered to audit web applications for security misconfigurations, missing HTTP security headers, SSL/TLS certificate flaws, and technology stack leaks.
 
-Built with Python, `httpx`, `Typer`, and `Rich`, ConfigSentry provides clear, actionable security insights and remediation strategies in a visually structured terminal output.
-
----
-
-## ⚡ Features
-
-* **HTTP Security Header Audit:** Detects missing or weak OWASP-recommended HTTP response headers (`HSTS`, `CSP`, `X-Frame-Options`, `X-Content-Type-Options`).
-* **Information Disclosure Detection:** Scans for server software and technology stack leaks in `Server` and `X-Powered-By` headers.
-* **SSL/TLS Certificate Inspection:** Checks certificate validity, expiration timeframes, and transport protocol security.
-* **Resilient Network Handling:** Handles DNS failures, connection timeouts, and network unreachable errors gracefully.
-* **Extensible Architecture:** Designed using the **Strategy Pattern** for adding custom analysis modules.
-* **Rich CLI Output:** Presents findings in color-coded, formatted terminal tables.
+Designed with **Clean Architecture** and the **Strategy Pattern**, ConfigSentry provides security engineers, DevOps professionals, and developers with clear, color-coded, and actionable remediation guidance directly in their terminal.
 
 ---
 
-## 📁 Repository Structure
+## Key Features
+
+* **HTTP Security Header Audit:** Identifies missing or misconfigured OWASP-recommended security headers including `Strict-Transport-Security` (HSTS), `Content-Security-Policy` (CSP), `X-Frame-Options`, and `X-Content-Type-Options`.
+* **Information Disclosure Detection:** Scans HTTP headers for software version leakage (`Server`) and backend stack identification (`X-Powered-By`).
+* **SSL/TLS Certificate Inspection:** Validates HTTPS enforcement, connection state, certificate validity, and expiration timeframes.
+* **Resilient Network Handling:** Gracefully handles DNS failures, connection timeouts, and network unreachable scenarios with detailed diagnostic output.
+* **Extensible & Modular Architecture:** Easily add custom analyzers by extending the strategy-based base analyzer class.
+* **Rich Terminal Output:** Renders formatted tables, risk classifications, and remediation steps using `Rich` and `Typer`.
+* **Automated CI/CD Workflows:** Fully integrated with GitHub Actions for multi-version Python testing via `pytest`.
+
+---
+
+## Architecture & Project Structure
 
 ```text
 configsentry/
-├── README.md                  # Project documentation
-├── LICENSE                    # MIT License
-├── pyproject.toml             # Package metadata and dependencies
-├── main.py                    # Application entry point
-├── configsentry/              # Core package
+├── .github/
+│   └── workflows/
+│       └── tests.yml          # CI/CD pipeline for automated testing
+├── configsentry/              # Core application package
 │   ├── __init__.py
-│   ├── cli.py                 # CLI interface setup (Typer)
-│   ├── core/                  # Core scanning engine & data models
+│   ├── cli.py                 # Typer-based CLI interface
+│   ├── core/                  # Engine orchestrator & Pydantic models
 │   │   ├── engine.py
 │   │   └── models.py
-│   ├── analyzers/             # Strategy-based security analyzers
+│   ├── analyzers/             # Strategy-pattern analyzer modules
 │   │   ├── base.py
 │   │   ├── headers.py
 │   │   ├── ssl_tls.py
 │   │   └── server_info.py
-│   └── reporters/             # Terminal reporting modules
+│   └── reporters/             # Terminal reporting modules (Rich)
 │       └── console.py
-└── tests/                     # Test suite
+├── tests/                     # Asynchronous unit test suite
+│   └── test_engine.py
+├── main.py                    # Entry point execution script
+├── pyproject.toml             # Project metadata and pytest configuration
+├── requirements.txt           # Dependency requirements
+├── LICENSE                    # MIT License
+└── README.md                  # Project documentation
 
 ```
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### Prerequisites
 
-* Python 3.10 or higher
+* Python **3.10** or higher
 * `pip` package manager
 
-### Setup
+### Setup Instructions
 
 1. **Clone the repository:**
 ```bash
@@ -71,7 +77,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 3. **Install dependencies:**
 ```bash
-pip install httpx pydantic typer rich pytest
+pip install -e .[dev]
 
 ```
 
@@ -79,25 +85,29 @@ pip install httpx pydantic typer rich pytest
 
 ---
 
-## 📖 Usage
+## Usage
 
-Run a security audit against a target URL using the CLI:
+### Run a Security Scan
+
+Audit a target web application by executing the `scan` command:
 
 ```bash
 python3 main.py scan https://example.com
 
 ```
 
-### Options
+### Advanced Usage Options
 
 * **Custom Request Timeout:**
+Set a custom connection timeout in seconds (default: 10.0s):
 ```bash
-python3 main.py scan https://example.com -t 5.0
+python3 main.py scan https://example.com --timeout 5.0
 
 ```
 
 
-* **Display Help:**
+* **Help Menu:**
+View available commands and options:
 ```bash
 python3 main.py --help
 
@@ -107,7 +117,18 @@ python3 main.py --help
 
 ---
 
-## 📊 Sample Output
+## Running Tests
+
+Execute the asynchronous test suite using `pytest`:
+
+```bash
+pytest
+
+```
+
+---
+
+## Sample Scan Output
 
 ```text
 🔍 Initiating security scan against: https://example.com
@@ -136,12 +157,12 @@ python3 main.py --help
 
 ---
 
-## 🛡️ Disclaimer
+## Disclaimer
 
-ConfigSentry is designed strictly for educational purposes, defensive security auditing, and authorized infrastructure assessment. Users are responsible for ensuring they have authorization to audit target applications before running scans.
+ConfigSentry is developed strictly for educational purposes, defensive security auditing, and authorized infrastructure testing. Always obtain explicit permission from the target system owner prior to executing scans.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](https://www.google.com/search?q=LICENSE).
